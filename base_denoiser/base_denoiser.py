@@ -1,6 +1,6 @@
+from .src.pedal_denoiser import run_pedal_denoiser
 
-
-def run_base_denoiser(audio, sr, denoiser=None):
+def run_base_denoiser(audio, sr, denoiser=None, version=0):
     """
     Run the base denoiser.
 
@@ -13,8 +13,8 @@ def run_base_denoiser(audio, sr, denoiser=None):
     elif denoiser=='scipy-lib':
         return run_scipy_denoiser(audio, sr)
     
-    elif denoiser=='peddleboard':
-        return run_pedalboard_denoiser(audio, sr)
+    elif denoiser=='pedalboard':
+        return run_pedal_denoiser(audio, sr, version)
     
     else:
         raise ValueError(f'Unknown denoiser: {denoiser}')
