@@ -1,12 +1,7 @@
 import torchaudio
 import torch
 
-def remove_silence(waveform, sr, silence_threshold=-40.0, chunk_size=1024, sample_rate=16000, min_silence_duration=0.3):
-    # Resample if needed
-    if sr != sample_rate:
-        resampler = torchaudio.transforms.Resample(sr, sample_rate)
-        waveform = resampler(waveform)
-
+def run_silence_remover(waveform, sample_rate=16000, silence_threshold=-40.0, chunk_size=1024, min_silence_duration=0.3):
     # Convert to mono
     if waveform.size(0) > 1:
         waveform = torch.mean(waveform, dim=0, keepdim=True)

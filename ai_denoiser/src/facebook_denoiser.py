@@ -34,8 +34,8 @@ def facebook48_denoise(wav, sr):
     wav = convert_audio(wav.cuda(), sr, model_d2.sample_rate, model_d2.chin)
     
     with torch.no_grad():
-        denoised = model_d(wav[None])[0]
-    denoised = convert_audio(denoised, model_d.sample_rate, sr, model_d.chin)
+        denoised = model_d2(wav[None])[0]
+    denoised = convert_audio(denoised, model_d2.sample_rate, sr, model_d2.chin)
     denoised = F.pad(denoised, (0, 1), "constant", 0)
 
     return denoised.cpu()
