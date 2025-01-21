@@ -10,7 +10,7 @@ from denoiser.dsp import convert_audio
 model_d = None
 model_d2 = None
 
-def facebook64_denoise(audio, sr):
+def facebook64_denoise(wav, sr):
     global model_d
     
     if model_d == None:
@@ -23,9 +23,9 @@ def facebook64_denoise(audio, sr):
     denoised = convert_audio(denoised, model_d.sample_rate, sr, model_d.chin)
     denoised = F.pad(denoised, (0, 1), "constant", 0)
     
-    return denoised.cpu()[-1,:].numpy()
+    return denoised.cpu()
 
-def facebook48_denoise(audio, sr):
+def facebook48_denoise(wav, sr):
     global model_d2
     
     if model_d2 == None:
@@ -38,4 +38,4 @@ def facebook48_denoise(audio, sr):
     denoised = convert_audio(denoised, model_d.sample_rate, sr, model_d.chin)
     denoised = F.pad(denoised, (0, 1), "constant", 0)
 
-    return denoised.cpu()[-1,:].numpy()
+    return denoised.cpu()

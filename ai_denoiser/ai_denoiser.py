@@ -1,3 +1,6 @@
+from .src.facebook_denoiser import facebook64_denoise, facebook48_denoise
+import torch
+
 def run_facebook_denoiser(audio, sr, version=0):
     """
     Run the facebook denoiser.
@@ -6,10 +9,10 @@ def run_facebook_denoiser(audio, sr, version=0):
     :type denoiser: str
     """
     
-    if waveform.ndim == 1:
-        waveform = waveform[None, :]
+    if audio.ndim == 1:
+        audio = audio[None, :]
     
-    waveform = torch.Tensor(waveform)
+    audio = torch.Tensor(audio)
     
     if version==64:
         return facebook64_denoise(audio, sr)
@@ -26,10 +29,10 @@ def run_resemble_denoiser(audio, sr, version=0):
     :type denoiser: str
     """
     
-    if waveform.ndim == 1:
-        waveform = torch.Tensor(waveform[None, :])
+    if audio.ndim == 1:
+        audio = torch.Tensor(audio[None, :])
     
-    waveform = torch.Tensor(waveform)
+    audio = torch.Tensor(audio)
     
     return resemble_denoise(audio, sr)
 
