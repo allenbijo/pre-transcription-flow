@@ -5,7 +5,9 @@ from ai_denoiser.ai_denoiser import run_ai_denoiser
 
 from helpers.noise_maker.noise_adder import add_noise
 from helpers.scoring.scorer import run_metric
+from helpers.scoring.time_calculator import calculate_time
 import time
+import os
 import pandas as pd
 
 
@@ -23,7 +25,15 @@ headers = [
 
 data = []
 
-noisy_audios = ['1', '2', '3']
+# clean_audios = ['./test_audios/'+entry for entry in os.listdir('./test_audios') if os.path.isfile(os.path.join('./test_audios', entry))]
+# print(clean_audios)
+# for clean_audio in clean_audios:
+#     audio, sr = load_and_resample(clean_audio, 16000)
+#     noisy_audio = add_noise(audio, sr, snr=1)
+#     save_audio(noisy_audio, sr, f'./noisy_audios/{clean_audio.split("/")[-1]}')
+
+
+noisy_audios = [entry for entry in os.listdir('./noisy_test_audios') if os.path.isfile(os.path.join('./noisy_test_audios', entry))]
 base_dens = ['nr-lib', 'pedalboard', 'None']
 silence_pos = [True, False]
 ai_dens = ['facebook64', 'facebook48', 'None']
@@ -31,17 +41,24 @@ for noisy_audio in noisy_audios:
     for base_den in base_dens:
         for silence_po in silence_pos:
             for ai_den in ai_dens:
-                # audio, sr = load_and_resample(f'test_audios/{noisy_audio}', 16000)
-                # denoised_audio = run_base_denoiser(audio, sr, denoiser=base_den, version=0)
-                # if silence_po:
-                #     silenced_audio = run_silence_remover(denoised_audio, sr, silence_threshold=-100.0, chunk_size=1024, min_silence_duration=0.3)
-                # else:
-                #     silenced_audio = denoised_audio
-                # ai_denoised_audio = run_ai_denoiser(silenced_audio, sr, denoiser=ai_den)
-                # save_audio(ai_denoised_audio, sr, f'{audio}_{base_den}_{silence_po}_{ai_den[0]}_{ai_den[1]}.wav')
+                start_time = time.time()
+                audio, sr = load_and_resample('./noisy_test_audios/'+noisy_audio, 16000)
+                denoised_audio = run_base_denoiser(audio, sr, denoiser=base_den, version=0)
+                if silence_po:
+                    silenced_audio = run_silence_remover(denoised_audio, sr, silence_threshold=-100.0, chunk_size=1024, min_silence_duration=0.3)
+                else:
+                    silenced_audio = denoised_audio
+                ai_denoised_audio = run_ai_denoiser(silenced_audio, sr, denoiser=ai_den)
+                save_audio(ai_denoised_audio, sr, f'{noisy_audio}_{base_den}_{silence_po}_{ai_den[0]}_{ai_den[1]}.wav')
                 # print(f'{noisy_audio}_{base_den}_{silence_po}_{ai_den[0]}_{ai_den[1]}.wav')
+                end_time = time.time()
+                
+                clean_audio = load_and_resample('./test_audios/'+noisy_audio, 16000)
+                inference_time = end_time - start_time
                 psnr, pesqw, pesqn = run_metric(audio, ai_denoised_audio, sr)
-                current_data = [noisy_audio, base_den, silence_po, ai_den, psnr, pesqw, pesqn, 0, 0, 0]
+                audio_time = calculate_time(audio, sr)
+                trimmed_time = calculate_time(ai_denoised_audio, sr)
+                current_data = [noisy_audio, base_den, silence_po, ai_den, psnr, pesqw, pesqn, inference_time, audio_time, trimmed_time]
                 data.append(current_data)
                 print(current_data)
                 
