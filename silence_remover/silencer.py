@@ -1,15 +1,21 @@
 import torchaudio
 import torch
 
+def normalize_waveform(waveform):
+    return waveform / torch.max(torch.abs(waveform))
+
 def run_silence_remover(waveform, sample_rate=16000, silence_threshold=-40.0, chunk_size=1024, min_silence_duration=0.3):
     if waveform.ndim == 1:
         waveform = waveform[None, :]
 
     waveform = torch.Tensor(waveform)
+
     # Convert to mono
     if waveform.size(0) > 1:
         waveform = torch.mean(waveform, dim=0, keepdim=True)
 
+    waveform = normalize_waveform(waveform)
+    
     # Calculate dB levels for chunks
     def calculate_db(chunk):
         rms = torch.sqrt(torch.mean(chunk**2))

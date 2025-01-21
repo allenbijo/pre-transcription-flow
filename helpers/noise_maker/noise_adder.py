@@ -2,11 +2,9 @@ from utils.audio_utils import load_and_resample
 import numpy as np
 
 
-def add_noise(data, sr):
+def add_noise(data, sr, snr=2):
     noise_clip, _ = load_and_resample('helpers/noise_maker/assets_cafe_short.wav', sr)
     
-    snr = 2
-
     noise_clip = noise_clip / snr
 
     if len(noise_clip) < len(data):

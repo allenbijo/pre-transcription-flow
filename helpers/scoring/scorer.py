@@ -26,6 +26,9 @@ def calculate_pesq(waveform1, waveform2, sample_rate):
     return pesqw, pesqn
 
 def run_metric(waveform1, waveform2, sample_rate):
+    waveform1 = torch.Tensor(waveform1)
+    waveform2 = torch.Tensor(waveform2)
+    
     waveform1, waveform2 = pad_waveforms(waveform1, waveform2)
 
     waveform1 = normalize_waveform(waveform1)
