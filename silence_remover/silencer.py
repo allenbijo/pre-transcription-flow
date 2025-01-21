@@ -2,6 +2,10 @@ import torchaudio
 import torch
 
 def run_silence_remover(waveform, sample_rate=16000, silence_threshold=-40.0, chunk_size=1024, min_silence_duration=0.3):
+    if waveform.ndim == 1:
+        waveform = waveform[None, :]
+    print(waveform.shape)
+    waveform = torch.Tensor(waveform)
     # Convert to mono
     if waveform.size(0) > 1:
         waveform = torch.mean(waveform, dim=0, keepdim=True)
@@ -50,4 +54,4 @@ def run_silence_remover(waveform, sample_rate=16000, silence_threshold=-40.0, ch
         output_waveform = torch.zeros((1, 0))
     
     output_waveform_np = output_waveform.numpy()
-    return output_waveform_np, sample_rate
+    return output_waveform_np

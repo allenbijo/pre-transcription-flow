@@ -1,4 +1,5 @@
 from .src.pedal_denoiser import run_pedal_denoiser
+from .src.lib_denoiser import run_lib_denoiser
 
 def run_base_denoiser(audio, sr, denoiser=None, version=0):
     """
@@ -10,8 +11,8 @@ def run_base_denoiser(audio, sr, denoiser=None, version=0):
     if denoiser==None:
         return audio
     
-    elif denoiser=='scipy-lib':
-        return run_scipy_denoiser(audio, sr)
+    elif denoiser=='nr-lib':
+        return run_lib_denoiser(audio, sr)
     
     elif denoiser=='pedalboard':
         return run_pedal_denoiser(audio, sr, version)

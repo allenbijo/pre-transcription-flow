@@ -1,8 +1,7 @@
 import noisereduce as nr
 from noisereduce.noisereduce import SpectralGateStationary
 
-def dnoise(data,rate):
-
+def run_lib_denoiser(data, rate):
     # Spectral Gate Noise Reduction
     sg = SpectralGateStationary(
         y=data,
@@ -32,4 +31,4 @@ def dnoise(data,rate):
         thresh_n_mult_nonstationary=2,
         stationary=False
     )
-    return reduced_noise_nonstationary, rate
+    return reduced_noise_nonstationary
