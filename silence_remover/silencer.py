@@ -1,16 +1,12 @@
 import torchaudio
 import torch
-import numpy as np
 
-def remove_silence(audio_path, output_path, silence_threshold=-40.0, chunk_size=1024, sample_rate=16000):
-    # Load audio file
-    waveform, sr = torchaudio.load(audio_path)
-    
+def remove_silence(waveform, sr, silence_threshold=-40.0, chunk_size=1024, sample_rate=16000, min_silence_duration=0.3):
     # Resample if needed
     if sr != sample_rate:
         resampler = torchaudio.transforms.Resample(sr, sample_rate)
         waveform = resampler(waveform)
-    
+
     # Convert to mono
     if waveform.size(0) > 1:
         waveform = torch.mean(waveform, dim=0, keepdim=True)
@@ -19,30 +15,44 @@ def remove_silence(audio_path, output_path, silence_threshold=-40.0, chunk_size=
     def calculate_db(chunk):
         rms = torch.sqrt(torch.mean(chunk**2))
         return 20 * torch.log10(rms + 1e-6)
-    
-    non_silent_parts = []
-    total_chunks = waveform.size(1) // chunk_size
 
-    for i in range(total_chunks):
-        start = i * chunk_size
-        end = start + chunk_size
+    min_silence_samples = int(min_silence_duration * sample_rate)  # Minimum silence duration in samples
+    non_silent_parts = []
+
+    current_silence_start = None
+    for i in range(0, waveform.size(1), chunk_size):
+        start = i
+        end = min(start + chunk_size, waveform.size(1))
         chunk = waveform[:, start:end]
 
-        # Check if chunk is above threshold
-        if calculate_db(chunk) > silence_threshold:
+        # Check if chunk is below the silence threshold
+        if calculate_db(chunk) <= silence_threshold:
+            if current_silence_start is None:
+                current_silence_start = start
+        else:
+            # If the silence was long enough, skip it
+            if current_silence_start is not None:
+                silence_duration = start - current_silence_start
+                if silence_duration < min_silence_samples:
+                    # If silence is too short, include it
+                    silent_chunk = waveform[:, current_silence_start:start]
+                    non_silent_parts.append(silent_chunk)
+                current_silence_start = None
             non_silent_parts.append(chunk)
-    
+
+    # Handle trailing silence
+    if current_silence_start is not None:
+        silence_duration = waveform.size(1) - current_silence_start
+        if silence_duration < min_silence_samples:
+            silent_chunk = waveform[:, current_silence_start:]
+            non_silent_parts.append(silent_chunk)
+
     # Combine non-silent parts
     if non_silent_parts:
         output_waveform = torch.cat(non_silent_parts, dim=1)
     else:
         # No non-silent parts, return empty audio
         output_waveform = torch.zeros((1, 0))
-
-    # Save the resulting audio
-    torchaudio.save(output_path, output_waveform, sample_rate)
-
-# Example usage
-input_file = "audio.wav"
-output_file = "output_audio_no_silence.wav"
-remove_silence(input_file, output_file, silence_threshold=-40.0, chunk_size=1024, sample_rate=16000)
+    
+    output_waveform_np = output_waveform.numpy()
+    return output_waveform_np, sample_rate
