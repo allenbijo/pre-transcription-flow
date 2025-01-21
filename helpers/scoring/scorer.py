@@ -21,11 +21,21 @@ def calculate_psnr(waveform1, waveform2):
     return psnr.item()
 
 def calculate_pesq(waveform1, waveform2, sample_rate):
+    waveform1 = waveform1[-1, :].numpy()
+    waveform2 = waveform2[-1, :].numpy()
+    print('here3')
     pesqw = pesq(sample_rate, waveform1, waveform2, 'wb')
+    print('here3')
     pesqn = pesq(sample_rate, waveform1, waveform2, 'nb')
     return pesqw, pesqn
 
 def run_metric(waveform1, waveform2, sample_rate):
+    if waveform1.ndim == 1:
+        waveform1 = waveform1[None, :]
+    
+    if waveform2.ndim == 1:
+        waveform2 = waveform2[None, :]
+
     waveform1 = torch.Tensor(waveform1)
     waveform2 = torch.Tensor(waveform2)
     
@@ -35,6 +45,7 @@ def run_metric(waveform1, waveform2, sample_rate):
     waveform2 = normalize_waveform(waveform2)
 
     psnr = calculate_psnr(waveform1, waveform2)
+    
     pesqw, pesqn = calculate_pesq(waveform1, waveform2, sample_rate)
 
     return psnr, pesqw, pesqn

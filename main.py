@@ -35,8 +35,8 @@ data = []
 
 noisy_audios = [entry for entry in os.listdir('./noisy_test_audios') if os.path.isfile(os.path.join('./noisy_test_audios', entry))]
 base_dens = ['nr-lib', 'pedalboard', 'None']
-silence_pos = [True, False]
-ai_dens = ['facebook64', 'facebook48', 'None']
+silence_pos = [False]
+ai_dens = ['None']
 for noisy_audio in noisy_audios:
     for base_den in base_dens:
         for silence_po in silence_pos:
@@ -45,19 +45,22 @@ for noisy_audio in noisy_audios:
                 audio, sr = load_and_resample('./noisy_test_audios/'+noisy_audio, 16000)
                 denoised_audio = run_base_denoiser(audio, sr, denoiser=base_den, version=0)
                 if silence_po:
-                    silenced_audio = run_silence_remover(denoised_audio, sr, silence_threshold=-100.0, chunk_size=1024, min_silence_duration=0.3)
+                    silenced_audio = run_silence_remover(denoised_audio, sr, silence_threshold=-50.0, chunk_size=1024, min_silence_duration=0.3)
                 else:
                     silenced_audio = denoised_audio
                 ai_denoised_audio = run_ai_denoiser(silenced_audio, sr, denoiser=ai_den)
-                save_audio(ai_denoised_audio, sr, f'{noisy_audio}_{base_den}_{silence_po}_{ai_den[0]}_{ai_den[1]}.wav')
+                save_audio(ai_denoised_audio, sr, f'./denoised_test_audios/{noisy_audio.split(".")[0]}_{base_den}_{silence_po}_{ai_den}.wav')
                 # print(f'{noisy_audio}_{base_den}_{silence_po}_{ai_den[0]}_{ai_den[1]}.wav')
                 end_time = time.time()
                 
-                clean_audio = load_and_resample('./test_audios/'+noisy_audio, 16000)
+                clean_audio, _ = load_and_resample('./test_audios/'+noisy_audio, 16000)
                 inference_time = end_time - start_time
-                psnr, pesqw, pesqn = run_metric(audio, ai_denoised_audio, sr)
+                print('here')
+                psnr, pesqw, pesqn = run_metric(clean_audio, ai_denoised_audio, sr)
+                print('here')
                 audio_time = calculate_time(audio, sr)
                 trimmed_time = calculate_time(ai_denoised_audio, sr)
+                print('here')
                 current_data = [noisy_audio, base_den, silence_po, ai_den, psnr, pesqw, pesqn, inference_time, audio_time, trimmed_time]
                 data.append(current_data)
                 print(current_data)

@@ -37,7 +37,7 @@ def run_resemble_denoiser(audio, sr, version=0):
     
     return resemble_denoise(audio, sr)
 
-def run_ai_denoiser(audio, sr, denoiser=None):
+def run_ai_denoiser(audio, sr, denoiser='None'):
     """
     Run the AI denoiser.
 
@@ -45,7 +45,7 @@ def run_ai_denoiser(audio, sr, denoiser=None):
     :type denoiser: str
     """
     
-    if denoiser==None:
+    if denoiser=='None':
         return audio
     
     elif denoiser=='facebook64':
