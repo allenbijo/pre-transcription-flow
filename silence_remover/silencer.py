@@ -4,7 +4,7 @@ import torch
 def run_silence_remover(waveform, sample_rate=16000, silence_threshold=-40.0, chunk_size=1024, min_silence_duration=0.3):
     if waveform.ndim == 1:
         waveform = waveform[None, :]
-    print(waveform.shape)
+
     waveform = torch.Tensor(waveform)
     # Convert to mono
     if waveform.size(0) > 1:
