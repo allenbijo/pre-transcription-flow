@@ -3,7 +3,7 @@ import numpy as np
 
 
 def add_noise(data, sr):
-    noise_clip, _ = load_and_resample('helpers/assets_cafe_short.wav', sr)
+    noise_clip, _ = load_and_resample('helpers/noise_maker/assets_cafe_short.wav', sr)
     
     snr = 2
 

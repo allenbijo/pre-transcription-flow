@@ -37,7 +37,7 @@ def run_resemble_denoiser(audio, sr, version=0):
     
     return resemble_denoise(audio, sr)
 
-def run_ai_denoiser(audio, sr, denoiser=None, version=0):
+def run_ai_denoiser(audio, sr, denoiser=None):
     """
     Run the AI denoiser.
 
@@ -48,8 +48,12 @@ def run_ai_denoiser(audio, sr, denoiser=None, version=0):
     if denoiser==None:
         return audio
     
-    elif denoiser=='facebook':
-        denoised = run_facebook_denoiser(audio, sr, version)
+    elif denoiser=='facebook64':
+        denoised = run_facebook_denoiser(audio, sr, 64)
+        return denoised[-1,:].numpy()
+    
+    elif denoiser=='facebook48':
+        denoised = run_facebook_denoiser(audio, sr, 48)
         return denoised[-1,:].numpy()
     
     elif denoiser=='resemble':
