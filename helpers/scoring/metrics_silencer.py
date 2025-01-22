@@ -54,6 +54,8 @@ def apply_segments_to_audio(waveform, segments):
     if waveform.ndim == 1:
         waveform = waveform[None, :]  # Add channel dimension if mono
 
+    waveform = torch.Tensor(waveform)
+    
     non_silent_parts = [waveform[:, start:end] for start, end in segments]
     if non_silent_parts:
         output_waveform = torch.cat(non_silent_parts, dim=1)

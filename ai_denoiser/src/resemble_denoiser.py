@@ -1,5 +1,6 @@
 from resemble_enhance.enhancer.inference import denoise
 import torch
+import torchaudio
 
 
 def resemble_denoise(dwav, sr):
@@ -10,6 +11,7 @@ def resemble_denoise(dwav, sr):
 
     dwav = dwav.mean(dim=0)
     wav1, new_sr = denoise(dwav, sr, device)
+    wav1 = torchaudio.transforms.Resample(orig_freq=new_sr, new_freq=sr)(wav1)
     wav1 = wav1.cpu().numpy()
     return wav1
 

@@ -6,6 +6,7 @@ from ai_denoiser.ai_denoiser import run_ai_denoiser
 from helpers.noise_maker.noise_adder import add_noise
 from helpers.scoring.scorer import run_metric
 from helpers.scoring.time_calculator import calculate_time
+from helpers.scoring.metrics_silencer import silence
 import time
 import os
 import pandas as pd
@@ -28,7 +29,7 @@ data = []
 
 noisy_audios = [entry for entry in os.listdir('./noisy_test_audios') if os.path.isfile(os.path.join('./noisy_test_audios', entry))]
 base_dens = ['nr-lib', 'pedalboard', 'None']
-silence_pos = [False]
+silence_pos = [True, False]
 ai_dens = ['facebook48', 'resemble', 'None']
 for noisy_audio in noisy_audios:
     for base_den in base_dens:
@@ -47,6 +48,8 @@ for noisy_audio in noisy_audios:
                 end_time = time.time()
                 
                 clean_audio, _ = load_and_resample('./test_audios/'+noisy_audio, 16000)
+                if silence_po:
+                    clean_audio = silence(denoised_audio, clean_audio, sr, silence_threshold=-50.0, chunk_size=1024, min_silence_duration=0.3)
                 inference_time = end_time - start_time
                 psnr, pesqw, pesqn = run_metric(clean_audio, ai_denoised_audio, sr)
                 audio_time = calculate_time(audio, sr)
