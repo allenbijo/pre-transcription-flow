@@ -21,12 +21,14 @@ def calculate_psnr(waveform1, waveform2):
     return psnr.item()
 
 def calculate_pesq(waveform1, waveform2, sample_rate):
-    waveform1 = waveform1[-1, :].numpy()
-    waveform2 = waveform2[-1, :].numpy()
-    print('here3')
-    pesqw = pesq(sample_rate, waveform1, waveform2, 'wb')
-    print('here3')
-    pesqn = pesq(sample_rate, waveform1, waveform2, 'nb')
+    waveform1 = waveform1[-1, :25000].numpy()
+    waveform2 = waveform2[-1, :25000].numpy()
+    try:
+        pesqw = pesq(sample_rate, waveform1, waveform2, 'wb')
+        pesqn = pesq(sample_rate, waveform1, waveform2, 'nb')
+    except:
+        pesqw = -1
+        pesqn = -1
     return pesqw, pesqn
 
 def run_metric(waveform1, waveform2, sample_rate):

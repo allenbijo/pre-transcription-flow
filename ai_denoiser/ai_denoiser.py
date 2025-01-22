@@ -1,5 +1,5 @@
 from .src.facebook_denoiser import facebook64_denoise, facebook48_denoise
-# from .src.resemble_denoiser import resemble_denoise
+from .src.resemble_denoiser import resemble_denoise
 import torch
 
 def run_facebook_denoiser(audio, sr, version=0):
@@ -57,8 +57,8 @@ def run_ai_denoiser(audio, sr, denoiser='None'):
         return denoised[-1,:].numpy()
     
     elif denoiser=='resemble':
-        denoised = run_resemble_denoiser(audio, sr, version)
-        return denoised[-1,:].numpy()
+        denoised = run_resemble_denoiser(audio, sr, 0)
+        return denoised
     
     else:
         raise ValueError(f'Unknown AI denoiser: {denoiser}')

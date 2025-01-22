@@ -2,7 +2,7 @@ from resemble_enhance.enhancer.inference import denoise
 import torch
 
 
-def resemble_denoise(audio, sr):
+def resemble_denoise(dwav, sr):
     if torch.cuda.is_available():
         device = "cuda"
     else:
