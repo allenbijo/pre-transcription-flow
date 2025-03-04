@@ -164,3 +164,7 @@ venvl/
 test_audios/
 noisy_test_audios/
 denoised_test_audios/
+
+*.csv
+*.wav
+*.zip

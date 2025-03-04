@@ -32,7 +32,7 @@ def main():
     audio, sr = load_and_resample(args.input_audio, args.resample_rate)
 
     # Run the base denoiser
-    denoised_audio = run_base_denoiser(audio, sr, denoiser=args.base_denoiser, version=0)
+    denoised_audio = run_base_denoiser(audio, sr, denoiser=args.base_denoiser, version=2)
 
     # Run silence removal if enabled
     if args.silence_removal:

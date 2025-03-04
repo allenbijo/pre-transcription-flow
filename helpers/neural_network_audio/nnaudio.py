@@ -57,6 +57,24 @@ def optimize_parameters(data, rate, target_actual,target_rate, epochs=50, popsiz
         maxiter=epochs,
         popsize=popsize,
         tol=1e-6,
+        disp=True,
+        workers=4,
     )
 
     return result.x, result.fun
+
+
+if __name__ == "__main__":
+    data, rate = load("radio1.wav", sr=None)
+    target, target_rate = load("audio.wav", sr=rate)
+
+    params, loss = optimize_parameters(data, rate, target, target_rate, epochs=100, popsize=20)
+    print("Optimized parameters:", params)
+    print("Final loss:", loss)
+    
+    data, rate = load("radio1_kalman_filtered.wav", sr=None)
+    target, target_rate = load("audio.wav", sr=rate)
+
+    params, loss = optimize_parameters(data, rate, target, target_rate, epochs=100, popsize=20)
+    print("Optimized parameters:", params)
+    print("Final loss:", loss)
