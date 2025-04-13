@@ -56,43 +56,7 @@ python audio_pipeline.py --input_audio path/to/noisy.wav \
 
 ---
 
-## 🧠 Example Output
 
-Processed audio files are saved as:
-
-```
-output_dir/filename_baseDenoiser_silenceFlag_aiDenoiser.wav
-```
-
-Example:
-```
-cleaned_audio/speech_spectralgate_True_demucs.wav
-```
-
----
-
-## 📂 Output Explanation
-
-- `spectralgate`, `demucs`: Denoiser names used
-- `True`: Indicates silence removal was applied
-
----
-
-## 📢 Notes
-
-- Ensure that the denoiser names passed to `--base_denoiser` and `--ai_denoiser` match supported implementations in your codebase (e.g., `spectralgate`, `noisereduce`, `demucs`, `rnnoise`, etc.).
-- Adjust silence thresholds and durations based on your use case (podcast, call, ambient recordings, etc.).
-- Output WAV files are always saved in 16-bit PCM format by default.
-
----
-
-## 🧪 TODOs
-
-- Add VAD-based segmentation
-- Support batch processing of directories
-- UI for interactive tuning
-
----
 
 ## 📄 License
 
